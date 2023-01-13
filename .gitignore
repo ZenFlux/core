@@ -1,0 +1,12 @@
+.DS_Store
+.idea/
+
+dist
+es
+lib
+node_modules
+
+
+tsconfig.paths.json
+
+Backups/
