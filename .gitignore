@@ -1,12 +1,11 @@
 .DS_Store
-.idea/
+.idea
 
 dist
 es
 lib
 node_modules
 
-
 tsconfig.paths.json
 
-Backups/
+Backups
