@@ -1,6 +1,3 @@
-/**
- * TODO: Create a package @zenflux/rollup to handle this mess.
- */
 import type {
     RollupOptions,
     OutputPlugin,
@@ -19,15 +16,7 @@ import pkg from './package.json' assert { type: 'json' };
 
 const babelRuntimeVersion = pkg.dependencies[ '@babel/runtime' ].replace( /^[^0-9]*/, '' );
 
-const extensions = [ '.ts' ],
-    input = 'src/index.ts',
-    outputName = '@zenflux/core',
-    outputFileName = 'zenflux-core',
-    external = [
-        ...Object.keys( pkg.dependencies || {} ),
-    ].map( name => RegExp( `^${name}($|/)` ) );
-
-interface ICommonPluginArgs {
+export interface ICommonPluginArgs {
     babelExcludeNodeModules?: boolean;
     babelHelpers?: 'bundled' | 'runtime' | 'inline' | 'external';
     babelRuntimeVersion?: string;
@@ -39,7 +28,17 @@ interface ICommonPluginArgs {
     sourceMap?: boolean;
 }
 
-const makePlugins = ( args: ICommonPluginArgs = {} ): OutputPlugin[] => {
+export type FormatType = 'cjs' | 'es' | 'esm' | 'umd-dev' | 'umd-prod'
+
+export interface IMakeConfArgs {
+    format: FormatType,
+    inputName: string,
+    outputName?: string,
+    outputFileName: string,
+    external?: string[] | RegExp[],
+}
+
+export const makePlugins = ( args: ICommonPluginArgs = {} ): OutputPlugin[] => {
     if ( args.development && args.production ) {
         throw new Error( 'Cannot set both development and production.' );
     }
@@ -107,7 +106,7 @@ const makePlugins = ( args: ICommonPluginArgs = {} ): OutputPlugin[] => {
     return plugins;
 }
 
-const makeOutput = ( name: string, format: ModuleFormat, ext = 'js' ): OutputOptions => {
+export const makeOutput = ( name: string, format: ModuleFormat, ext = 'js' ): OutputOptions => {
     return {
         format,
         file: `dist/${ format }/${ name }.${ ext }`,
@@ -116,79 +115,110 @@ const makeOutput = ( name: string, format: ModuleFormat, ext = 'js' ): OutputOpt
     }
 }
 
+const makeConf = ( args: IMakeConfArgs ): RollupOptions => {
+    const { format, inputName, external, outputFileName } = args;
+
+    const shared: any = { input: inputName, external },
+        result: RollupOptions = { ...shared };
+
+    switch ( format ) {
+        case 'cjs': {
+            result.output = makeOutput( outputFileName, format );
+            result.plugins = makePlugins( {
+                createDeclaration: false,
+                babelRuntimeVersion: babelRuntimeVersion,
+                babelHelpers: 'runtime'
+            } );
+        }
+        break;
+
+        case 'es':
+        {
+            result.output = makeOutput( outputFileName, format );
+            result.plugins = makePlugins( {
+                createDeclaration: true,
+                babelRuntimeVersion: babelRuntimeVersion,
+                babelUseESModules: true,
+                babelHelpers: 'runtime',
+                // sourceMap: true,
+            } );
+        }
+        break;
+
+        case 'esm': {
+            result.output = {
+                ... makeOutput( outputFileName, 'es', 'mjs' ),
+                name: outputName,
+            };
+            result.plugins = makePlugins( {
+                createDeclaration: false,
+                babelRuntimeVersion: babelRuntimeVersion,
+                babelHelpers: 'bundled',
+                minify: true,
+                production: true,
+            } );
+        }
+        break;
+
+        case 'umd-dev': {
+            result.output = {
+                ...makeOutput( outputFileName, 'umd' ),
+                name: outputName,
+            };
+            result.plugins = makePlugins( {
+                createDeclaration: false,
+                babelRuntimeVersion: babelRuntimeVersion,
+                babelHelpers: 'bundled',
+                babelExcludeNodeModules: true,
+                development: true,
+                // sourceMap: true,
+            } );
+        }
+        break;
+
+        case 'umd-prod': {
+            result.output = {
+                ...makeOutput( outputFileName, 'umd' ),
+                name: outputName,
+            };
+            result.plugins = makePlugins( {
+                createDeclaration: false,
+                babelRuntimeVersion: babelRuntimeVersion,
+                babelHelpers: 'bundled',
+                babelExcludeNodeModules: true,
+                minify: true,
+                production: true,
+            } )
+        }
+        break;
+
+        default: {
+            throw new Error( `Unknown format: ${ format }` );
+        }
+    }
+
+    return result;
+}
+
+const extensions = [ '.ts' ],
+    inputName = 'src/index.ts',
+    outputName = '@zenflux/core',
+    outputFileName = 'zenflux-core',
+    external = [
+        ...Object.keys( pkg.dependencies || {} ),
+    ].map( name => RegExp( `^${name}($|/)` ) );
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default async function rollup( command: Record<string, unknown> ): Promise<RollupOptions | RollupOptions[]> {
-    const shared = {
-        input,
-        external,
-    }, commonJSBuild: RollupOptions = {
-        ...shared,
-        output: makeOutput( outputFileName, 'cjs' ),
-        plugins: makePlugins( {
-            createDeclaration: false,
-            babelRuntimeVersion: babelRuntimeVersion,
-            babelHelpers: 'runtime'
-        } ),
-    }, esBuild: RollupOptions = {
-        ...shared,
-        output: makeOutput( outputFileName, 'es' ),
-        plugins: makePlugins( {
-            createDeclaration: true,
-            babelRuntimeVersion: babelRuntimeVersion,
-            babelUseESModules: true,
-            babelHelpers: 'runtime',
-            // sourceMap: true,
-        } )
-    }, esBrowserBuild: RollupOptions = {
-        ...shared,
-        output: {
-            ...makeOutput( outputFileName, 'es', 'mjs' ),
-            name: outputName,
-        },
-        plugins: makePlugins( {
-            createDeclaration: false,
-            babelRuntimeVersion: babelRuntimeVersion,
-            babelHelpers: 'bundled',
-            minify: true,
-            production: true,
-        } )
-    }, umdBuildDev: RollupOptions = {
-        ...shared,
-        output: {
-            ...makeOutput( outputFileName, 'umd' ),
-            name: outputName,
-        },
-        plugins: makePlugins( {
-            createDeclaration: false,
-            babelRuntimeVersion: babelRuntimeVersion,
-            babelHelpers: 'bundled',
-            babelExcludeNodeModules: true,
-            development: true,
-            // sourceMap: true,
-        } )
-    }, umdBuildProd: RollupOptions = {
-        ...shared,
-        output: {
-            ...makeOutput( outputFileName, 'umd' ),
-            name: outputName,
-        },
-        plugins: makePlugins( {
-            createDeclaration: false,
-            babelRuntimeVersion: babelRuntimeVersion,
-            babelHelpers: 'bundled',
-            babelExcludeNodeModules: true,
-            minify: true,
-            production: true,
-        } )
-    };
+    const formats: FormatType[] = [ 'cjs', 'es', 'esm', 'umd-dev', 'umd-prod' ];
 
-    return [
-        commonJSBuild,
-        esBuild,
-        esBrowserBuild,
-        umdBuildDev,
-        umdBuildProd,
-    ];
+    return formats.map( format => makeConf( {
+        format,
+        inputName,
+        outputName,
+        outputFileName,
+        external,
+    } ) );
 }
 
 await rollup( {} );
