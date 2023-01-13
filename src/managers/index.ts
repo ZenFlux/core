@@ -1,3 +1,6 @@
+/**
+ * @author: Leonid Vinikov <leonidvinikov@gmail.com>
+ */
 import * as managersBases from "../manager-bases";
 
 export let commands = {} as managersBases.Commands;

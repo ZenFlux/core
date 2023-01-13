@@ -1,5 +1,5 @@
 /**
- * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @author: Leonid Vinikov <leonidvinikov@gmail.com>
  * @description: is base class/object for all classes, responsible for: 'getName', implementation.
  */
 import { ForceMethodBase } from "../errors/force-method";

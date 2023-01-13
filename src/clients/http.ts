@@ -1,5 +1,5 @@
 /**
- * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @author: Leonid Vinikov <leonidvinikov@gmail.com>
  * @description: Providing a simple wrapper for fetch API.
  */
 import ObjectBase from "../core/object-base";

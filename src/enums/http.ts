@@ -1,3 +1,6 @@
+/**
+ * @author: Leonid Vinikov <leonidvinikov@gmail.com>
+ */
 export enum HTTPMethodEnum {
     DELETE = 'DELETE',  // Delete.
     GET = 'GET',        // Read.

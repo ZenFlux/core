@@ -1,5 +1,5 @@
 /**
- * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @author: Leonid Vinikov <leonidvinikov@gmail.com>
  * @description: Responsible for manging/running/hooking commands.
  */
 import { Logger } from "../modules/";

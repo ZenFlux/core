@@ -1,5 +1,5 @@
 /**
- * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @author: Leonid Vinikov <leonidvinikov@gmail.com>
  * @description: Base for all commands, they are all will be managed by the `Commands` managers.
  * @TODO
  *  - Add validateArgs method or find something better.

@@ -1,5 +1,5 @@
 /**
- * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @author: Leonid Vinikov <leonidvinikov@gmail.com>
  * @description: Responsible for manging data commands which are wrappers for HTTP requests.
  */
 import Commands from "./commands";

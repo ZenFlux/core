@@ -1,3 +1,6 @@
+/**
+ * @author: Leonid Vinikov <leonidvinikov@gmail.com>
+ */
 export * as commandBases from "./command-bases";
 export * as core from "./core";
 export * as errors from "./errors";

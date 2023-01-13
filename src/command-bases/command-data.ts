@@ -1,5 +1,5 @@
 /**
- * @author: Leonid Vinikov <czf.leo123@gmail.com>
+ * @author: Leonid Vinikov <leonidvinikov@gmail.com>
  * @description: Each data command should represent a final REST endpoint.
  */
 import { ForceMethod } from '../errors/force-method';
