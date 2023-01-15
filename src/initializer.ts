@@ -1,8 +1,10 @@
 import pkg from "../package.json";
 
-import * as exported from './exports';
-
 import { IAPIConfig } from "./interfaces/config";
+
+import { destroy, initialize, afterInitializeCallbacks } from "./managers";
+
+import * as exported from './exports';
 
 declare global {
     var ZenCore: any;
@@ -22,7 +24,6 @@ export let config: IAPIConfig = {
     version: pkg.version,
 }
 
-const afterInitializeCallbacks: ( () => void )[] = [];
 
 export const CoreAPI = {
     initialize: ( configuration?: IAPIConfig ) => {
@@ -30,23 +31,16 @@ export const CoreAPI = {
 
         config = configuration || config;
 
-        exported.managers.commands = new exported.managerBases.Commands();
-        exported.managers.controllers = new exported.managerBases.Controllers();
-        exported.managers.data = new exported.managerBases.Data( config );
-        exported.managers.internal = new exported.managerBases.Internal();
+        initialize( config )
 
         isInitialized = true;
 
-        afterInitializeCallbacks.forEach( ( callback ) => callback() );
     },
 
     destroy: () => {
-        isInitialized = false;
+        destroy();
 
-        exported.managers.commands = {} as exported.managerBases.Commands;
-        exported.managers.controllers = {} as exported.managerBases.Controllers
-        exported.managers.data = {} as exported.managerBases.Data;
-        exported.managers.internal = {} as exported.managerBases.Internal;
+        isInitialized = false;
     },
 
     onAfterInitialize: ( callback: () => void ) => {

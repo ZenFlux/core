@@ -1,5 +1,4 @@
-import * as ZenCore from "../../src/exports";
-import { CommandPublic } from "../../src/command-bases";
+import { ZenCore } from "../__shared__";
 
 describe( 'managers', () => {
     describe( 'commands', () => {
@@ -47,7 +46,7 @@ describe( 'managers', () => {
                                 didTestCommandRun = true;
                             }
                         }
-                    } as { [ key: string ]: typeof CommandPublic }
+                    } as { [ key: string ]: typeof ZenCore.commandBases.CommandPublic }
                 }
             } )
 

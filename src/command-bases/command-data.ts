@@ -5,7 +5,7 @@
 import { ForceMethod } from '../errors/force-method';
 import { CommandBase } from './command-base';
 
-import { data } from '../managers/';
+import * as managers from '../managers';
 
 export abstract class CommandData extends CommandBase {
     static getName() {
@@ -28,8 +28,8 @@ export abstract class CommandData extends CommandBase {
     apply( args = this.args, options = this.options ) {// eslint-disable-line @typescript-eslint/no-unused-vars
         const endpoint = this.applyEndpointFormat( this.getEndpoint(), args );
 
-        return data.getClient().fetch(
-            endpoint, data.currentHttpMethod, args || null
+        return managers.data.getClient().fetch(
+            endpoint, managers.data.currentHttpMethod, args || null
         );
     }
 

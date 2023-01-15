@@ -1,21 +1,18 @@
-import ZenCore from '../src/';
-
 import shared from "./__shared__";
 
 import { APIGetIdCounter, APIResetIdCounter } from "../src/core/object-base";
 
 beforeAll( async () => {
-    // Do something.
- })
+} )
 
-beforeEach(async () => {
-    ZenCore.initialize();
+beforeEach( async () => {
+    shared.initZenCore();
 
     shared.initialObjectsCount = APIGetIdCounter();
 } );
 
-afterEach(() => {
-    ZenCore.destroy();
+afterEach( () => {
+    shared.destroyZenCore();
 
     APIResetIdCounter();
 
