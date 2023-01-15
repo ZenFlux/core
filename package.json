@@ -1,11 +1,12 @@
 {
 	"name": "@zenflux/core",
-	"version": "0.0.0-dev.0",
+	"version": "0.0.0-alpha.0",
 	"description": "ZenFlux core",
 	"author": "Leonid Vinikov <leonidvinikov@gmail.com> (https://github.com/iNewLegend)",
 	"scripts": {
 		"test": "export flow_modules_logger=off && jest",
-		"build": "rollup --config rollup.config.ts --configPlugin typescript"
+		"build": "rollup --config rollup.config.ts --configPlugin typescript",
+		"watch": "rollup --config rollup.config.ts --configPlugin typescript --watch"
 	},
 	"repository": {
 		"type": "git",
@@ -18,6 +19,11 @@
 		"commands",
 		"manager",
 		"commands manager"
+	],
+	"files": [
+		"dist",
+		"src",
+		"types"
 	],
 	"license": "MIT",
 	"main": "dist/cjs/zenflux-core.js",

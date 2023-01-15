@@ -1,4 +1,5 @@
-import * as ZenCore from "../../src/exports";
+import { ZenCore } from "../__shared__";
+
 import { HTTPMethodEnum } from "../../src/enums/http";
 
 describe( 'command-bases', () => {

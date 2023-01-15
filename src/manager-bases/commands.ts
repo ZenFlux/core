@@ -4,8 +4,10 @@
  */
 import { Logger } from "../modules/";
 import { CommandBase } from "../command-bases";
-import { Controller, ObjectBase } from "../core";
 import { CommandAlreadyRegistered, CommandNotFound } from "../errors/";
+
+import ObjectBase from "../core/object-base";
+import Controller from "../core/controller";
 
 import {
     ICommandArgsInterface,

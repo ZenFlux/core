@@ -2,7 +2,8 @@
  * @author: Leonid Vinikov <leonidvinikov@gmail.com>
  * @description: Responsible for manging controllers, each controller is global singleton instance.
  */
-import { Controller, ObjectBase } from "../core";
+import ObjectBase from "../core/object-base";
+import Controller from "../core/controller";
 
 import { ControllerAlreadyRegistered } from "../errors/controller-already-registered";
 
