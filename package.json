@@ -1,56 +1,48 @@
 {
 	"name": "@zenflux/core",
-	"version": "0.0.0-alpha.0",
+	"version": "0.0.0-alpha.5",
 	"description": "ZenFlux core",
-	"author": "Leonid Vinikov <leonidvinikov@gmail.com> (https://github.com/iNewLegend)",
-	"scripts": {
-		"test": "export flow_modules_logger=off && jest",
-		"build": "rollup --config rollup.config.ts --configPlugin typescript",
-		"watch": "rollup --config rollup.config.ts --configPlugin typescript --watch"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/zenflux/core.git"
-	},
 	"keywords": [
 		"zenflux",
 		"zen",
 		"flux",
 		"commands",
 		"manager",
-		"commands manager"
+		"commands manager",
+		"core",
+		"zenflux-core"
 	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/zenflux/core.git"
+	},
+	"license": "MIT",
+	"author": "Leonid Vinikov <leonidvinikov@gmail.com> (https://github.com/iNewLegend)",
+	"main": "dist/cjs/zenflux-core.js",
+	"unpkg": "dist/umd/zenflux-core.js",
+	"module": "dist/es/zenflux-core.js",
+	"types": "types/index.d.ts",
 	"files": [
 		"dist",
 		"src",
 		"types"
 	],
-	"license": "MIT",
-	"main": "dist/cjs/zenflux-core.js",
-	"unpkg": "dist/umd/zenflux-core.js",
-	"module": "dist/es/zenflux-core.js",
-	"types": "types/index.d.ts",
+	"scripts": {
+		"test": "export flow_modules_logger=off && jest",
+		"toolkit-build": "node_modules/@zenflux/rollup-toolkit/bin/run @build",
+		"toolkit-build-dev": "node_modules/@zenflux/rollup-toolkit/bin/dev @build",
+		"toolkit-watch": "node_modules/@zenflux/rollup-toolkit/bin/run @watch",
+		"toolkit-watch-dev": "node_modules/@zenflux/rollup-toolkit/bin/dev @watch"
+	},
 	"devDependencies": {
-		"@babel/core": "^7.20.7",
-		"@babel/plugin-transform-runtime": "^7.19.6",
 		"@babel/preset-env": "^7.20.2",
 		"@babel/preset-typescript": "^7.18.6",
-		"@babel/runtime": "^7.20.7",
-		"@rollup/plugin-babel": "^6.0.3",
-		"@rollup/plugin-json": "^6.0.0",
-		"@rollup/plugin-node-resolve": "^15.0.1",
-		"@rollup/plugin-replace": "^5.0.2",
-		"@rollup/plugin-terser": "^0.2.1",
-		"@rollup/plugin-typescript": "^10.0.1",
 		"@types/jest": "^29.2.5",
 		"@typescript-eslint/eslint-plugin": "^5.48.0",
 		"@typescript-eslint/parser": "^5.48.0",
+		"@zenflux/rollup-toolkit": "^0.0.0-alpha.3",
 		"babel-jest": "^29.3.1",
-		"rollup": "^3.9.1",
 		"ts-jest": "^29.0.3",
 		"tslib": "^2.4.1"
-	},
-	"dependencies": {
-		"@babel/runtime": "^7.19.0"
 	}
 }
