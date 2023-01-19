@@ -8,7 +8,20 @@
 import { hexColorDelta, getCircularReplacer } from "../utils";
 
 // TODO: Should by dynamic/configure-able.
-const MAX_WRAPPING_RECURSIVE_DEPTH = 4;
+const MAX_WRAPPING_RECURSIVE_DEPTH = 4,
+    STACK_BACKWARD_CALLER_INDEX = 3,
+    UNKNOWN_CALLER_NAME = 'anonymous function',
+    BABEL_EXCLUDE_FUNCTIONS_NAMES = [
+        '_callee',
+        'tryCatch',
+        '<anonymous>',
+        'Generator.next',
+        'asyncGeneratorStep',
+        '_next',
+    ];
+
+// TODO: Should by dynamic/configure-able.
+Error.stackTraceLimit = 50;
 
 export class Logger {
     static wrappers = {};
@@ -53,7 +66,6 @@ export class Logger {
         }
         // @ts-ignore
         Logger.wrappers[ classType.name ].push( { classType, callback } );
-
     }
 
     /**
@@ -61,20 +73,54 @@ export class Logger {
      */
     private static getCallerName() {
         const error = new Error(),
-            caller = error.stack ? error.stack.split( "\n" )[ 3 ].trim() : '_UNKNOWN_CALLER_NAME_'
+            errorsPerLine = error.stack?.split( "\n" ) || [],
+            caller = errorsPerLine.length ? errorsPerLine[ STACK_BACKWARD_CALLER_INDEX ].trim() : UNKNOWN_CALLER_NAME;
 
         if ( caller.startsWith( "at new" ) ) {
             return "constructor";
         }
 
-        return caller.split( "." )[ 1 ].split( " " )[ 0 ];
+        let extractName = caller.split( "." )[ 1 ].split( " " )[ 0 ],
+            isBabelAsyncRuntime = false;
+
+        // Babel compatibility.
+        if ( extractName.includes( '_callee' ) ) {
+
+            // Run till find reliable function name.
+            for ( let i = STACK_BACKWARD_CALLER_INDEX; i < errorsPerLine.length; i++ ) {
+                const line = errorsPerLine[ i ];
+
+                const isExcluded = BABEL_EXCLUDE_FUNCTIONS_NAMES.some( ( excludeName ) => {
+                    return line.includes( excludeName );
+                } );
+
+                if ( ! isExcluded ) {
+                    const format = line.trim().split(' ');
+
+                    if ( format.length <= 2 ) {
+                        continue;
+                    }
+
+                    extractName = format[ 1 ].split( "." )[ 1 ];
+                    isBabelAsyncRuntime = true;
+                    break;
+                }
+            }
+
+            if ( ! isBabelAsyncRuntime ) {
+                extractName = UNKNOWN_CALLER_NAME;
+            }
+
+        }
+
+        return extractName;
     }
 
     /**
      * Function functionView() : Return function preview.
      */
     private static getFunctionView( fn: string | Function ): ( string | Function ) {
-        let fReturn = "anonymous function()";
+        let fReturn = UNKNOWN_CALLER_NAME;
 
         // TODO: Check if works.
         if ( typeof fn !== "string" && fn.name.length !== 0 ) {
@@ -157,7 +203,7 @@ export class Logger {
         Logger.wrapperDepth++;
 
         // Result will lose classType (instanceOf will not work), now based on obj.
-        let result = { ... obj };
+        let result = { ...obj };
 
         // @ts-ignore
         Object.values( Logger.wrappers ).forEach( ( [ wrapper ] ) => {
@@ -405,7 +451,7 @@ export class Logger {
     /**
      * Function out() : Print console log with style
      */
-    private out( ... args: any ) {
+    private out( ...args: any ) {
         this.outputHandler.apply( this, args );
     }
 }
