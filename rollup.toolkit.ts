@@ -6,6 +6,6 @@ const config: IZenFluxRollupConfig = {
     inputFileName: 'src/index.ts',
     outputName: '@zenflux/core',
     outputFileName: 'zenflux-core',
-}
+};
 
 export default config;

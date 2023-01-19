@@ -1,4 +1,5 @@
-import pkg from "../package.json";
+// @ts-ignore
+import * as pkg from "../package.json" assert {type: "json"};
 
 import { IAPIConfig } from "./interfaces/config";
 

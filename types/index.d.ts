@@ -1,6 +1,6 @@
-export { initialize, destroy, onAfterInitialize } from "../dist/es/src/initializer";
+export { initialize, destroy, onAfterInitialize } from "../dist/es/initializer";
 
-export * from '../dist/es/src/exports';
+export * from '../dist/es/exports';
 
-export * as managers from "../dist/es/src/managers";
+export * as managers from "../dist/es/managers";
 
