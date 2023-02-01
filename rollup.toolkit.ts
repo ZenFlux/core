@@ -1,7 +1,7 @@
-import { IZenFluxRollupConfig } from "@zenflux/rollup-toolkit";
+import { IZenToolkitConfig } from "@zenflux/rollup-toolkit";
 
-const config: IZenFluxRollupConfig = {
-    format: [ 'cjs', 'es', 'esm', 'umd' ],
+const config: IZenToolkitConfig = {
+    format: [ 'es' ],
     extensions: [ '.ts' ],
     inputFileName: 'src/index.ts',
     outputName: '@zenflux/core',
