@@ -9,12 +9,11 @@ import * as exported from './exports';
 
 declare global {
     var ZenCore: any;
+    var __ZEN_CORE__IS_INITIALIZED__: boolean;
 }
 
-let isInitialized = false;
-
 function errorInitTwice() {
-    if ( isInitialized ) {
+    if ( 'undefined' !== typeof __ZEN_CORE__IS_INITIALIZED__ && __ZEN_CORE__IS_INITIALIZED__) {
         throw new Error( 'ZenCore is already initialized.' );
     }
 }
@@ -33,14 +32,14 @@ export const CoreAPI = {
 
         initialize( config );
 
-        isInitialized = true;
+        globalThis.__ZEN_CORE__IS_INITIALIZED__ = true;
 
     },
 
     destroy: () => {
         destroy();
 
-        isInitialized = false;
+        globalThis.__ZEN_CORE__IS_INITIALIZED__ = false;
     },
 
     onAfterInitialize: ( callback: () => void ) => {
