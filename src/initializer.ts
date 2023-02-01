@@ -1,5 +1,5 @@
 // @ts-ignore
-import * as pkg from "../package.json" assert {type: "json"};
+import * as pkg from "../package.json" assert { type: "json" };
 
 import { IAPIConfig } from "./interfaces/config";
 
@@ -23,8 +23,7 @@ errorInitTwice();
 
 export let config: IAPIConfig = {
     version: pkg.version,
-}
-
+};
 
 export const CoreAPI = {
     initialize: ( configuration?: IAPIConfig ) => {
@@ -32,7 +31,7 @@ export const CoreAPI = {
 
         config = configuration || config;
 
-        initialize( config )
+        initialize( config );
 
         isInitialized = true;
 
@@ -51,7 +50,7 @@ export const CoreAPI = {
     config,
 
     ...exported,
-}
+};
 
 // TODO: Make it available only for development.
 if ( ! globalThis?.ZenCore ) globalThis.ZenCore = CoreAPI;
