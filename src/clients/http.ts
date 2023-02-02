@@ -8,10 +8,20 @@ import Logger from '../modules/logger';
 
 import { HTTPMethodEnum } from "../enums/http";
 
+import {
+    TErrorHandlerCallback,
+    TResponseHandlerCallback,
+} from "../interfaces/data";
+
+// noinspection ExceptionCaughtLocallyJS
+
 export class Http extends ObjectBase {
     private readonly logger: Logger;
 
     private readonly apiBaseUrl: string;
+
+    private errorHandler?: TErrorHandlerCallback = undefined;
+    private responseHandler?: TResponseHandlerCallback = undefined;
 
     static getName() {
         return 'Core/Clients/Http';
@@ -30,10 +40,26 @@ export class Http extends ObjectBase {
         this.apiBaseUrl = apiBaseUrl + '/';
     }
 
+    public setResponseHandler( callback: TResponseHandlerCallback ) {
+        if ( this.responseHandler ) {
+            throw new Error( 'Data handler already set.' );
+        }
+
+        this.responseHandler = callback;
+    }
+
+    public setErrorHandler( callback: TErrorHandlerCallback ) {
+        if ( this.errorHandler ) {
+            throw new Error( 'Error handler already set.' );
+        }
+
+        this.errorHandler = callback;
+    }
+
     /**
      * Function fetch() : Fetch api.
      */
-    async fetch( path: string, method: HTTPMethodEnum, body: {} | null = null ) {
+    async fetch( path: string, method: HTTPMethodEnum, body: any = {} ) {
         this.logger.startWith( { path, method, body } );
 
         const params: RequestInit = { 'credentials': 'include' }, // Support cookies.
@@ -60,21 +86,38 @@ export class Http extends ObjectBase {
         let data = undefined;
 
         try {
-            data = await response.json();
+            let responseText = await response.text();
+
+            if ( ! response.ok ) {
+                throw response;
+            } else if ( this.applyResponseHandler( responseText ) ) {
+                return false;
+            } else if ( response.headers.get( 'Content-Type' )?.includes( 'application/json' ) ) {
+                data = JSON.parse( responseText );
+            } else {
+                throw response;
+            }
         } catch ( e ) {
+            if ( this.applyErrorHandler( e ) ) {
+                return false;
+            }
+
             console.error( e );
 
             return false;
         }
 
-        // TODO: This is part should be modular and not hard coded.
-        if ( data?.error && data?.global && data?.message ) {
-            throw new Error( data.message );
-        }
-
         this.logger.drop( { path }, data );
 
         return data;
+    }
+
+    private applyErrorHandler( error: any ) {
+        return this.errorHandler && this.errorHandler( error );
+    }
+
+    private applyResponseHandler( text: string ) {
+        return this.responseHandler && this.responseHandler( text );
     }
 }
 

@@ -19,16 +19,24 @@ describe( 'clients', () => {
         test( 'fetch():: returns correct data', async () => {
             // Arrange.
             const mockResponse = { data: 'mock data' },
-                mockFetchPromise = Promise.resolve( { json: () => mockResponse } );
+                mockJsonPromise = Promise.resolve(mockResponse),
+                mockFetchPromise = Promise.resolve({
+                    text: () => Promise.resolve( JSON.stringify( mockResponse ) ),
+                    ok: true,
+                    json: () => mockJsonPromise,
+                    headers: {
+                        get: () => 'application/json'
+                    }
+                });
 
-            global.fetch = jest.fn().mockImplementation( () => mockFetchPromise );
+            globalThis.fetch = jest.fn().mockImplementation(() => mockFetchPromise);
 
             // Act.
-            const result = await http.fetch( '/path', HTTPMethodEnum.GET );
+            const result = await http.fetch('/path', HTTPMethodEnum.GET);
 
             // Assert.
-            expect( result ).toEqual( mockResponse );
-        } );
+            expect(result).toEqual(mockResponse);
+        });
 
         test( 'fetch():: returns false on error', async () => {
             // Arrange.

@@ -12,6 +12,7 @@ import { HTTPMethodEnum } from "../enums/http";
 
 import { IAPIConfig } from "../interfaces/config";
 import { ICommandArgsInterface, ICommandOptionsInterface } from '../interfaces/commands';
+import { TResponseHandlerCallback, TErrorHandlerCallback } from "../interfaces/data";
 
 export class Data extends Commands {
     private static client: Http;
@@ -83,6 +84,20 @@ export class Data extends Commands {
         this.currentHttpMethod = HTTPMethodEnum.__EMPTY__;
 
         return args.result;
+    }
+
+    /**
+     * On return true, the request will be swallowed.
+     */
+    public setErrorHandler( callback: TErrorHandlerCallback ) {
+        this.getClient().setErrorHandler( callback );
+    }
+
+    /**
+     * On return true, the request will be swallowed.
+     */
+    public setResponseHandler( callback: TResponseHandlerCallback ) {
+        this.getClient().setResponseHandler( callback );
     }
 }
 
