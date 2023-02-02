@@ -5,6 +5,7 @@
  *  - Add validateArgs method or find something better.
  */
 import ObjectBase from "../core/object-base";
+import Controller from "../core/controller";
 
 import ForceMethod from "../errors/force-method";
 
@@ -17,6 +18,8 @@ export abstract class CommandBase extends ObjectBase {
     protected options: ICommandOptionsInterface = {};
 
     private readonly logger: Logger;
+
+    private controller: Controller;
 
     constructor( args: ICommandArgsInterface = {}, options = {} ) {
         super();
@@ -32,16 +35,16 @@ export abstract class CommandBase extends ObjectBase {
         this.initialize( args, options );
     }
 
-    initialize( args: ICommandArgsInterface, options: ICommandOptionsInterface ) {
+    public initialize( args: ICommandArgsInterface, options: ICommandOptionsInterface ) {
         this.args = args;
         this.options = options;
     }
 
-    apply( args = this.args, options = this.options ): any {// eslint-disable-line @typescript-eslint/no-unused-vars
+    public apply( args = this.args, options = this.options ): any {// eslint-disable-line @typescript-eslint/no-unused-vars
         throw new ForceMethod( this, "apply" );
     }
 
-    async run() {
+    public async run() {
         this.onBeforeApply && this.onBeforeApply();
 
         const result = await this.apply( this.args, this.options );
@@ -51,17 +54,25 @@ export abstract class CommandBase extends ObjectBase {
         return result;
     }
 
-    getArgs() {
+    public getArgs() {
         return this.args;
     }
 
-    getOptions() {
+    public getOptions() {
         return this.options;
     }
 
-    onBeforeApply?():void;
+    public setController( controller: Controller ) {
+        this.controller = controller;
+    }
 
-    onAfterApply?():void;
+    public getController() {
+        return this.controller;
+    }
+
+    public onBeforeApply?():void;
+
+    public onAfterApply?():void;
 }
 
 export default CommandBase;
