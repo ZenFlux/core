@@ -38,31 +38,13 @@ describe( 'clients', () => {
             expect(result).toEqual(mockResponse);
         });
 
-        test( 'fetch():: returns false on error', async () => {
-            // Arrange.
-            const mockFetchPromise = Promise.resolve( {
-                json: () => {
-                    throw new Error();
-                }
-            } );
-
-            global.fetch = jest.fn().mockImplementation( () => mockFetchPromise );
-
-            // Mute console.error.
-            jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-
-            // Act.
-            const result = await http.fetch( '/path', HTTPMethodEnum.GET );
-
-            // Assert.
-            expect( result ).toBe( false );
-        } );
-
         test( 'fetch():: with POST method sends correct data', async () => {
             // Arrange.
             const mockBody = { key: 'value' },
                 mockFetchPromise = Promise.resolve( {
-                    json: () => {}
+                    text: () => Promise.resolve( JSON.stringify( {} ) ),
+                    json: () => {},
+                    ok: true,
                 } );
 
 
@@ -82,5 +64,42 @@ describe( 'clients', () => {
                 },
             );
         } );
+
+        test( 'fetch():: throws an error when fetch fails', async () => {
+            // Arrange.
+            const mockFetchPromise = Promise.resolve({
+                ok: false,
+                text: () => Promise.resolve( 'failed' ),
+            });
+
+            global.fetch = jest.fn().mockImplementation(() => mockFetchPromise);
+
+            // Act.
+            const promise = http.fetch( '/path', HTTPMethodEnum.GET );
+
+            // Assert.
+            await expect( promise ).rejects.toBeDefined();
+        });
+
+
+        test('fetch():: throws an error when the response is not valid JSON', async () => {
+            // Arrange.
+            const mockFetchPromise = Promise.resolve({
+                text: () => Promise.resolve('not valid JSON'),
+                ok: true,
+                json: () => Promise.reject(new Error('Invalid JSON')),
+                headers: {
+                    get: () => 'application/json',
+                },
+            });
+
+            global.fetch = jest.fn().mockImplementation(() => mockFetchPromise);
+
+            // Act.
+            const promise = http.fetch('/path', HTTPMethodEnum.GET);
+
+            // Assert.
+            await expect( promise ).rejects.toThrow( RegExp( 'Unexpected token' ) );
+        });
     } );
 } );
