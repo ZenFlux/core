@@ -10,8 +10,9 @@ import { HTTPMethodEnum } from "../enums/http";
 
 import {
     TErrorHandlerCallback,
+    TResponseFilterCallback,
     TResponseHandlerCallback,
-} from "../interfaces/data";
+} from "../interfaces";
 
 // noinspection ExceptionCaughtLocallyJS
 
@@ -21,6 +22,7 @@ export class Http extends ObjectBase {
     private readonly apiBaseUrl: string;
 
     private errorHandler?: TErrorHandlerCallback = undefined;
+    private responseFilter?: TResponseFilterCallback = undefined;
     private responseHandler?: TResponseHandlerCallback = undefined;
 
     static getName() {
@@ -38,22 +40,6 @@ export class Http extends ObjectBase {
         this.logger.startWith( { apiBaseUrl } );
 
         this.apiBaseUrl = apiBaseUrl + '/';
-    }
-
-    public setResponseHandler( callback: TResponseHandlerCallback ) {
-        if ( this.responseHandler ) {
-            throw new Error( 'Data handler already set.' );
-        }
-
-        this.responseHandler = callback;
-    }
-
-    public setErrorHandler( callback: TErrorHandlerCallback ) {
-        if ( this.errorHandler ) {
-            throw new Error( 'Error handler already set.' );
-        }
-
-        this.errorHandler = callback;
     }
 
     /**
@@ -86,25 +72,30 @@ export class Http extends ObjectBase {
         let data = undefined;
 
         try {
-            let responseText = await response.text();
-
             if ( ! response.ok ) {
                 throw response;
-            } else if ( this.applyResponseHandler( responseText ) ) {
-                return false;
-            } else if ( response.headers.get( 'Content-Type' )?.includes( 'application/json' ) ) {
+            }
+
+            let responseText = await response.text();
+
+            responseText = this.applyResponseFilter( responseText );
+
+            // TODO: Currently support JSON and plain text.
+            if ( response.headers?.get( 'Content-Type' )?.includes( 'application/json' ) ) {
                 data = JSON.parse( responseText );
             } else {
-                throw response;
+                data = responseText;
+            }
+
+            if ( this.applyResponseHandler( data ) ) {
+                return false;
             }
         } catch ( e ) {
             if ( this.applyErrorHandler( e ) ) {
                 return false;
             }
 
-            console.error( e );
-
-            return false;
+            await Promise.reject( e );
         }
 
         this.logger.drop( { path }, data );
@@ -112,8 +103,36 @@ export class Http extends ObjectBase {
         return data;
     }
 
+    public setErrorHandler( callback: TErrorHandlerCallback ) {
+        if ( this.errorHandler ) {
+            throw new Error( 'Error handler already set.' );
+        }
+
+        this.errorHandler = callback;
+    }
+
+    public setResponseFilter( callback: TResponseFilterCallback ) {
+        if ( this.responseFilter ) {
+            throw new Error( 'Response filter already set.' );
+        }
+
+        this.responseFilter = callback;
+    }
+
+    public setResponseHandler( callback: TResponseHandlerCallback ) {
+        if ( this.responseHandler ) {
+            throw new Error( 'Response handler already set.' );
+        }
+
+        this.responseHandler = callback;
+    }
+
     private applyErrorHandler( error: any ) {
         return this.errorHandler && this.errorHandler( error );
+    }
+
+    private applyResponseFilter( text: string ) {
+        return ( this.responseFilter && this.responseFilter( text ) ) || text;
     }
 
     private applyResponseHandler( text: string ) {

@@ -12,7 +12,13 @@ import { HTTPMethodEnum } from "../enums/http";
 
 import { IAPIConfig } from "../interfaces/config";
 import { ICommandArgsInterface, ICommandOptionsInterface } from '../interfaces/commands';
-import { TResponseHandlerCallback, TErrorHandlerCallback } from "../interfaces/data";
+import {
+    TResponseHandlerCallback,
+    TErrorHandlerCallback,
+    TResponseFilterCallback,
+    EResponseHandlerType,
+    TPossibleHandlers,
+} from "../interfaces";
 
 export class Data extends Commands {
     private static client: Http;
@@ -78,7 +84,7 @@ export class Data extends Commands {
             newArgs.args.data = args;
         }
 
-        args.result = await super.runInstance( command, newArgs, options )
+        args.result = await super.runInstance( command, newArgs, options );
 
         // Clear method type.
         this.currentHttpMethod = HTTPMethodEnum.__EMPTY__;
@@ -87,17 +93,23 @@ export class Data extends Commands {
     }
 
     /**
-     * On return true, the request will be swallowed.
+     * Handlers on return true will swallow the request.
      */
-    public setErrorHandler( callback: TErrorHandlerCallback ) {
-        this.getClient().setErrorHandler( callback );
-    }
+    public setHandler( type: EResponseHandlerType, callback: TPossibleHandlers ) {
+        switch ( type ) {
+            case EResponseHandlerType.ERROR_HANDLER:
+                Data.client.setErrorHandler( callback as TErrorHandlerCallback );
+                break;
+            case EResponseHandlerType.RESPONSE_FILTER:
+                Data.client.setResponseFilter( callback as TResponseFilterCallback );
+                break;
+            case EResponseHandlerType.RESPONSE_HANDLER:
+                Data.client.setResponseHandler( callback as TResponseHandlerCallback );
+                break;
 
-    /**
-     * On return true, the request will be swallowed.
-     */
-    public setResponseHandler( callback: TResponseHandlerCallback ) {
-        this.getClient().setResponseHandler( callback );
+            default:
+                throw new Error( `Unknown handler type: '${ type }'` );
+        }
     }
 }
 
