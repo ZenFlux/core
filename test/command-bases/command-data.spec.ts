@@ -1,6 +1,4 @@
-import { ZenCore } from "../__shared__";
-
-import { HTTPMethodEnum } from "../../src/enums/http";
+import * as ZenCore from "../../src/exports";
 
 describe( 'command-bases', () => {
     describe( 'command-data', () => {
@@ -33,7 +31,7 @@ describe( 'command-bases', () => {
         test( 'apply()', async () => {
             // Arrange
             ZenCore.managers.data.getClient().fetch = jest.fn().mockImplementation(
-                async ( path: string, method: HTTPMethodEnum, body: {} | null = null ) => {
+                async ( path: string, method: ZenCore.interfaces.E_HTTP_METHOD_TYPE, body: {} | null = null ) => {
                     // Fake result.
                     return {
                         path,
@@ -58,7 +56,7 @@ describe( 'command-bases', () => {
         test( 'apply():: Ensure applyEndpointFormat()', async () => {
             // Arrange.
             ZenCore.managers.data.getClient().fetch = jest.fn().mockImplementation(
-                async ( path: string, method: HTTPMethodEnum, body: {} | null = null ) => {
+                async ( path: string, method: ZenCore.interfaces.E_HTTP_METHOD_TYPE, body: {} | null = null ) => {
                     // Fake result.
                     return {
                         path,

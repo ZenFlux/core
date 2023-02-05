@@ -13,7 +13,7 @@ describe( 'managers', () => {
                     static getName() {
                         return 'Test/Controller/Test/Command';
                     }
-                }
+                };
 
             // Register new controller.
             ZenCore.managers.commands.register( { MyCommand }, controller );

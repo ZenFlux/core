@@ -6,7 +6,7 @@ import Controllers from "../manager-bases/controllers";
 import Data from "../manager-bases/data";
 import Internal from "../manager-bases/internal";
 
-import { IAPIConfig } from "../interfaces/config";
+import { IAPIConfig } from "../interfaces/";
 
 export const afterInitializeCallbacks: ( () => void )[] = [];
 

@@ -10,11 +10,12 @@ import ObjectBase from "../core/object-base";
 import Controller from "../core/controller";
 
 import {
-    ICommandArgsInterface,
     CommandCallbackType,
+    ICommandArgsInterface,
     IOnHookAffectInterface,
-    IOnHookInterface, ICommandOptionsInterface,
-} from "../interfaces/commands";
+    IOnHookInterface,
+    ICommandOptionsInterface,
+} from "../interfaces/";
 
 export class Commands extends ObjectBase {
     public static readonly trace:string[] = [];

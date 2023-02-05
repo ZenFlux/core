@@ -4,7 +4,7 @@
  */
 import { ForceMethodBase } from "../errors/force-method";
 
-import { IObjectBaseInterface } from "../interfaces/object-base";
+import { IObjectBaseInterface } from "../interfaces/";
 
 let IdCounter = 0;
 

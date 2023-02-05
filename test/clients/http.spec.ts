@@ -1,5 +1,6 @@
+import * as ZenCore from "../../src/exports";
+
 import Http from '../../src/clients/http';
-import { HTTPMethodEnum } from '../../src/enums/http';
 
 describe( 'clients', () => {
     describe( 'http', () => {
@@ -32,7 +33,7 @@ describe( 'clients', () => {
             globalThis.fetch = jest.fn().mockImplementation(() => mockFetchPromise);
 
             // Act.
-            const result = await http.fetch('/path', HTTPMethodEnum.GET);
+            const result = await http.fetch('/path', ZenCore.interfaces.E_HTTP_METHOD_TYPE.GET);
 
             // Assert.
             expect(result).toEqual(mockResponse);
@@ -51,7 +52,7 @@ describe( 'clients', () => {
             global.fetch = jest.fn().mockImplementation( () => mockFetchPromise );
 
             // Act.
-            await http.fetch( 'path', HTTPMethodEnum.POST, mockBody );
+            await http.fetch( 'path', ZenCore.interfaces.E_HTTP_METHOD_TYPE.POST, mockBody );
 
             // Assert.
             expect( global.fetch ).toHaveBeenCalledWith(
@@ -75,7 +76,7 @@ describe( 'clients', () => {
             global.fetch = jest.fn().mockImplementation(() => mockFetchPromise);
 
             // Act.
-            const promise = http.fetch( '/path', HTTPMethodEnum.GET );
+            const promise = http.fetch( '/path', ZenCore.interfaces.E_HTTP_METHOD_TYPE.GET );
 
             // Assert.
             await expect( promise ).rejects.toBeDefined();
@@ -96,7 +97,7 @@ describe( 'clients', () => {
             global.fetch = jest.fn().mockImplementation(() => mockFetchPromise);
 
             // Act.
-            const promise = http.fetch('/path', HTTPMethodEnum.GET);
+            const promise = http.fetch('/path', ZenCore.interfaces.E_HTTP_METHOD_TYPE.GET);
 
             // Assert.
             await expect( promise ).rejects.toThrow( RegExp( 'Unexpected token' ) );

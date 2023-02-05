@@ -1,4 +1,5 @@
 import * as ZenCore from '../../src/';
+
 import shared from "../__shared__";
 
 describe( 'Core', () => {

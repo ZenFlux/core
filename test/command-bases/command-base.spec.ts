@@ -1,11 +1,10 @@
 import * as ZenCore from "../../src/exports";
-import { ICommandArgsInterface } from "../../src/interfaces/commands";
 
 describe( 'command-bases' , () => {
     describe( 'command-base', () => {
         test( 'initialize()', () => {
             // Arrange.
-            const args: ICommandArgsInterface = {
+            const args: ZenCore.interfaces.ICommandArgsInterface = {
                     test: 'test',
                 },
                 options = {
@@ -37,9 +36,8 @@ describe( 'command-bases' , () => {
                     return 'ZenCore/Commands/Command/Test'
                 }
 
-
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                apply( args: ICommandArgsInterface = this.args, options: {} = this.options ) {
+                apply( args: ZenCore.interfaces.ICommandArgsInterface = this.args, options: {} = this.options ) {
                     if ( args.passed ) {
                         this.passed = true;
                     }

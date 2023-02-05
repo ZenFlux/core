@@ -11,9 +11,9 @@ import ForceMethod from "../errors/force-method";
 
 import Logger from "../modules/logger";
 
-import ControllerAlreadySet from "../errors/controller-already-set";
+import { ControllerAlreadySet } from "../errors";
 
-import { ICommandArgsInterface, ICommandOptionsInterface } from "../interfaces/commands";
+import { ICommandArgsInterface, ICommandOptionsInterface } from "../interfaces/";
 
 export abstract class CommandBase extends ObjectBase {
     private static controller: Controller;

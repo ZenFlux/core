@@ -6,13 +6,13 @@ import ObjectBase from "../core/object-base";
 
 import Logger from '../modules/logger';
 
-import { HTTPMethodEnum } from "../enums/http";
-
 import {
-    TErrorHandlerCallback,
-    TResponseFilterCallback,
-    TResponseHandlerCallback,
-} from "../interfaces";
+    TErrorHandlerCallbackType,
+    TResponseFilterCallbackType,
+    TResponseHandlerCallbackType,
+
+    E_HTTP_METHOD_TYPE,
+} from "../interfaces/";
 
 // noinspection ExceptionCaughtLocallyJS
 
@@ -21,9 +21,9 @@ export class Http extends ObjectBase {
 
     private readonly apiBaseUrl: string;
 
-    private errorHandler?: TErrorHandlerCallback = undefined;
-    private responseFilter?: TResponseFilterCallback = undefined;
-    private responseHandler?: TResponseHandlerCallback = undefined;
+    private errorHandler?: TErrorHandlerCallbackType = undefined;
+    private responseFilter?: TResponseFilterCallbackType = undefined;
+    private responseHandler?: TResponseHandlerCallbackType = undefined;
 
     static getName() {
         return 'Core/Clients/Http';
@@ -45,16 +45,16 @@ export class Http extends ObjectBase {
     /**
      * Function fetch() : Fetch api.
      */
-    async fetch( path: string, method: HTTPMethodEnum, body: any = {} ) {
+    async fetch( path: string, method: E_HTTP_METHOD_TYPE, body: any = {} ) {
         this.logger.startWith( { path, method, body } );
 
         const params: RequestInit = { 'credentials': 'include' }, // Support cookies.
             headers = {};
 
         if ( [
-            HTTPMethodEnum.POST,
-            HTTPMethodEnum.PUT,
-            HTTPMethodEnum.PATCH,
+            E_HTTP_METHOD_TYPE.POST,
+            E_HTTP_METHOD_TYPE.PUT,
+            E_HTTP_METHOD_TYPE.PATCH,
         ].includes( method ) ) {
             Object.assign( headers, { 'Content-Type': 'application/json' } );
             Object.assign( params, {
@@ -103,7 +103,7 @@ export class Http extends ObjectBase {
         return data;
     }
 
-    public setErrorHandler( callback: TErrorHandlerCallback ) {
+    public setErrorHandler( callback: TErrorHandlerCallbackType ) {
         if ( this.errorHandler ) {
             throw new Error( 'Error handler already set.' );
         }
@@ -111,7 +111,7 @@ export class Http extends ObjectBase {
         this.errorHandler = callback;
     }
 
-    public setResponseFilter( callback: TResponseFilterCallback ) {
+    public setResponseFilter( callback: TResponseFilterCallbackType ) {
         if ( this.responseFilter ) {
             throw new Error( 'Response filter already set.' );
         }
@@ -119,7 +119,7 @@ export class Http extends ObjectBase {
         this.responseFilter = callback;
     }
 
-    public setResponseHandler( callback: TResponseHandlerCallback ) {
+    public setResponseHandler( callback: TResponseHandlerCallbackType ) {
         if ( this.responseHandler ) {
             throw new Error( 'Response handler already set.' );
         }
