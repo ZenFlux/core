@@ -7,11 +7,10 @@ import ObjectBase from "../core/object-base";
 import Logger from '../modules/logger';
 
 import {
+    E_HTTP_METHOD_TYPE,
     TErrorHandlerCallbackType,
     TResponseFilterCallbackType,
     TResponseHandlerCallbackType,
-
-    E_HTTP_METHOD_TYPE,
 } from "../interfaces/";
 
 // noinspection ExceptionCaughtLocallyJS
@@ -51,20 +50,15 @@ export class Http extends ObjectBase {
         const params: RequestInit = { 'credentials': 'include' }, // Support cookies.
             headers = {};
 
-        if ( [
-            E_HTTP_METHOD_TYPE.POST,
-            E_HTTP_METHOD_TYPE.PUT,
-            E_HTTP_METHOD_TYPE.PATCH,
-        ].includes( method ) ) {
+        if ( method === E_HTTP_METHOD_TYPE.GET ) {
+            Object.assign( params, { headers } );
+        } else {
             Object.assign( headers, { 'Content-Type': 'application/json' } );
             Object.assign( params, {
                 method,
                 headers: headers,
                 body: JSON.stringify( body )
             } );
-
-        } else {
-            Object.assign( params, { headers } );
         }
 
         const response = await globalThis.fetch( this.apiBaseUrl + path, params );
