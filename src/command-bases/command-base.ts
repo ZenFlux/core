@@ -11,15 +11,29 @@ import ForceMethod from "../errors/force-method";
 
 import Logger from "../modules/logger";
 
+import ControllerAlreadySet from "../errors/controller-already-set";
+
 import { ICommandArgsInterface, ICommandOptionsInterface } from "../interfaces/commands";
 
 export abstract class CommandBase extends ObjectBase {
+    private static controller: Controller;
+
     protected args: ICommandArgsInterface = {};
     protected options: ICommandOptionsInterface = {};
 
     private readonly logger: Logger;
 
-    private controller: Controller;
+    public static setController( controller: Controller ) {
+        if ( this.controller ) {
+            throw new ControllerAlreadySet();
+        }
+
+        this.controller = controller;
+    }
+
+    public static getController() {
+        return this.controller;
+    }
 
     constructor( args: ICommandArgsInterface = {}, options = {} ) {
         super();
@@ -60,14 +74,6 @@ export abstract class CommandBase extends ObjectBase {
 
     public getOptions() {
         return this.options;
-    }
-
-    public setController( controller: Controller ) {
-        this.controller = controller;
-    }
-
-    public getController() {
-        return this.controller;
     }
 
     public onBeforeApply?():void;

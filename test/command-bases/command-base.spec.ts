@@ -21,7 +21,7 @@ describe( 'command-bases' , () => {
             const instance = new CommandClass( args, options );
 
             // Act.
-            instance.initialize( args, options )
+            instance.initialize( args, options );
 
             // Assert.
             expect( instance.getArgs() ).toEqual( args );
@@ -53,6 +53,29 @@ describe( 'command-bases' , () => {
 
             // Assert.
             expect( instance.passed ).toBe( true );
-        } )
+        } );
+
+        test( 'setController():: Ensure controller cannot set twice', () => {
+            // Arrange.
+            const CommandClass = class Command extends ZenCore.commandBases.CommandBase {
+                static getName() {
+                    return 'ZenCore/Commands/Command/Test'
+                }
+            };
+
+            class TestController extends ZenCore.core.Controller {
+                static getName() {
+                    return 'ZenCore/Controllers/Test'
+                }
+            }
+
+            CommandClass.setController( new TestController() );
+
+            // Act.
+            const error = () => CommandClass.setController( new TestController() );
+
+            // Assert.
+            expect( error ).toThrowError( ZenCore.errors.ControllerAlreadySet );
+        } );
     } );
 } );

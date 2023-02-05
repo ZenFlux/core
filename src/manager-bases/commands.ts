@@ -94,6 +94,8 @@ export class Commands extends ObjectBase {
                 throw new CommandAlreadyRegistered( command );
             }
 
+            command.setController( controller );
+
             this.commands[ commandName ] = command;
 
             result[ commandName ] = command;
