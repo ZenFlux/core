@@ -1,10 +1,10 @@
 /**
  * @author: Leonid Vinikov <leonidvinikov@gmail.com>
- * @description: Responsible for manging data commands which are wrappers for HTTP requests.
+ * @description: Responsible for manging restful commands which are wrappers for HTTP requests.
  */
 import Commands from "./commands";
 
-import { CommandData } from '../command-bases/';
+import { CommandRestful } from '../command-bases/';
 
 import Http from '../clients/http';
 
@@ -12,6 +12,7 @@ import {
     IAPIConfig,
     ICommandArgsInterface,
     ICommandOptionsInterface,
+
     TErrorHandlerCallbackType,
     TPossibleHandlersType,
     TResponseFilterCallbackType,
@@ -21,23 +22,23 @@ import {
     E_HTTP_METHOD_TYPE
 } from "../interfaces/";
 
-export class Data extends Commands {
+export class Restful extends Commands {
     private static client: Http;
 
     public currentHttpMethod: E_HTTP_METHOD_TYPE;
 
     static getName() {
-        return 'Core/Managers/Data';
+        return 'Core/Managers/Restful';
     }
 
     constructor( Config: IAPIConfig ) {
         super();
 
-        Data.client = new Http( Config.baseURL, Config.requestInit );
+        Restful.client = new Http( Config.baseURL, Config.requestInit );
     }
 
     public getClient() {
-        return Data.client;
+        return Restful.client;
     }
 
     public get( command: string, args: ICommandArgsInterface = {}, options: ICommandOptionsInterface = {} ) {
@@ -64,7 +65,7 @@ export class Data extends Commands {
         return super.run( command, args, options );
     }
 
-    protected async runInstance( command: CommandData, args: ICommandArgsInterface = {}, options: {} = {} ) {
+    protected async runInstance( command: CommandRestful, args: ICommandArgsInterface = {}, options: {} = {} ) {
         if ( ! this.currentHttpMethod ) {
             throw new Error( 'Cannot run directly use one of the http methods: "get", "update", "delete, "create' );
         }
@@ -98,13 +99,13 @@ export class Data extends Commands {
     public setHandler( type: E_RESPONSE_HANDLER_TYPE, callback: TPossibleHandlersType ) {
         switch ( type ) {
             case E_RESPONSE_HANDLER_TYPE.ERROR_HANDLER:
-                Data.client.setErrorHandler( callback as TErrorHandlerCallbackType );
+                Restful.client.setErrorHandler( callback as TErrorHandlerCallbackType );
                 break;
             case E_RESPONSE_HANDLER_TYPE.RESPONSE_FILTER:
-                Data.client.setResponseFilter( callback as TResponseFilterCallbackType );
+                Restful.client.setResponseFilter( callback as TResponseFilterCallbackType );
                 break;
             case E_RESPONSE_HANDLER_TYPE.RESPONSE_HANDLER:
-                Data.client.setResponseHandler( callback as TResponseHandlerCallbackType );
+                Restful.client.setResponseHandler( callback as TResponseHandlerCallbackType );
                 break;
 
             default:
@@ -113,4 +114,4 @@ export class Data extends Commands {
     }
 }
 
-export default Data;
+export default Restful;

@@ -3,5 +3,5 @@
  */
 export { Commands } from './commands';
 export { Controllers } from './controllers';
-export { Data } from './data';
+export { Restful } from './restful';
 export { Internal } from './internal';

@@ -1,15 +1,15 @@
 /**
  * @author: Leonid Vinikov <leonidvinikov@gmail.com>
- * @description: Each data command should represent a final REST endpoint.
+ * @description: Each rest command should represent a final REST endpoint.
  */
 import { ForceMethod } from '../errors/force-method';
 import { CommandBase } from './command-base';
 
 import * as managers from '../managers';
 
-export abstract class CommandData extends CommandBase {
+export abstract class CommandRestful extends CommandBase {
     static getName() {
-        return 'Core/CommandBases/CommandData';
+        return 'Core/CommandBases/CommandRestful';
     }
 
     /**
@@ -28,8 +28,8 @@ export abstract class CommandData extends CommandBase {
     apply( args = this.args, options = this.options ) {// eslint-disable-line @typescript-eslint/no-unused-vars
         const endpoint = this.applyEndpointFormat( this.getEndpoint(), args );
 
-        return managers.data.getClient().fetch(
-            endpoint, managers.data.currentHttpMethod, args || null
+        return managers.restful.getClient().fetch(
+            endpoint, managers.restful.currentHttpMethod, args || null
         );
     }
 
@@ -51,4 +51,4 @@ export abstract class CommandData extends CommandBase {
     }
 }
 
-export default CommandData;
+export default CommandRestful;

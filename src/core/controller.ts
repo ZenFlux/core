@@ -4,13 +4,13 @@
  */
 import ObjectBase from "./object-base";
 
-import { CommandData, CommandInternal, CommandPublic } from "../command-bases";
+import { CommandRestful, CommandInternal, CommandPublic } from "../command-bases";
 
 import * as managers from "../managers/";
 
 export abstract class Controller extends ObjectBase {
     commands: { [ key: string ]: typeof CommandPublic };
-    data: { [ key: string ]: typeof CommandData };
+    restful: { [ key: string ]: typeof CommandRestful };
     internal: { [ key: string ]: typeof CommandInternal };
 
     static getName() {
@@ -33,8 +33,8 @@ export abstract class Controller extends ObjectBase {
         this.commands = managers.commands.register( this.getCommands(), this ) as
             { [ key: string ]: typeof CommandPublic };
 
-        this.data = managers.data.register( this.getData(), this ) as
-            { [ key: string ]: typeof CommandData };
+        this.restful = managers.restful.register( this.getRestful(), this ) as
+            { [ key: string ]: typeof CommandRestful };
 
         this.internal = managers.internal.register( this.getInternal(), this ) as
             { [ key: string ]: typeof CommandInternal };
@@ -44,7 +44,7 @@ export abstract class Controller extends ObjectBase {
         return {};
     }
 
-    getData(): { [ key: string ]: typeof CommandData } {
+    getRestful(): { [ key: string ]: typeof CommandRestful } {
         return {};
     }
 

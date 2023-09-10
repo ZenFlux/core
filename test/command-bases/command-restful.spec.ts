@@ -1,17 +1,17 @@
 import * as ZenCore from "../../src/exports";
 
 describe( 'command-bases', () => {
-    describe( 'command-data', () => {
+    describe( 'command-restful', () => {
         test( 'getEndpoint()', () => {
             // Arrange
-            const dataCommand = new class MyDataCommand extends ZenCore.commandBases.CommandData {
+            const restfulCommand = new class MyDataCommand extends ZenCore.commandBases.CommandRestful {
                 getEndpoint() {
                     return 'test';
                 }
-            }
+            };
 
             // Act
-            const endpoint = dataCommand.getEndpoint();
+            const endpoint = restfulCommand.getEndpoint();
 
             // Assert
             expect( endpoint ).toBe( 'test' );
@@ -19,10 +19,10 @@ describe( 'command-bases', () => {
 
         test( 'getEndpoint():: Ensure throws ForceMethod', () => {
             // Arrange
-            const dataCommand = new class MyDataCommand extends ZenCore.commandBases.CommandData {}
+            const restfulCommand = new class MyDataCommand extends ZenCore.commandBases.CommandRestful {}
 
             // Act
-            const endpoint = () => dataCommand.getEndpoint();
+            const endpoint = () => restfulCommand.getEndpoint();
 
             // Assert
             expect( endpoint ).toThrow( ZenCore.errors.ForceMethod );
@@ -30,7 +30,7 @@ describe( 'command-bases', () => {
 
         test( 'apply()', async () => {
             // Arrange
-            ZenCore.managers.data.getClient().fetch = jest.fn().mockImplementation(
+            ZenCore.managers.restful.getClient().fetch = jest.fn().mockImplementation(
                 async ( path: string, method: ZenCore.interfaces.E_HTTP_METHOD_TYPE, body: {} | null = null ) => {
                     // Fake result.
                     return {
@@ -40,22 +40,22 @@ describe( 'command-bases', () => {
                     }
                 } );
 
-            const dataCommand = new class MyDataCommand extends ZenCore.commandBases.CommandData {
+            const restfulCommand = new class MyDataCommand extends ZenCore.commandBases.CommandRestful {
                 getEndpoint() {
                     return 'custom/endpoint';
                 }
-            }
+            };
 
             // Act
-            const result = await dataCommand.apply();
+            const result = await restfulCommand.apply();
 
             // Assert
-            expect( result.path ).toEqual( dataCommand.getEndpoint() );
+            expect( result.path ).toEqual( restfulCommand.getEndpoint() );
         } );
 
         test( 'apply():: Ensure applyEndpointFormat()', async () => {
             // Arrange.
-            ZenCore.managers.data.getClient().fetch = jest.fn().mockImplementation(
+            ZenCore.managers.restful.getClient().fetch = jest.fn().mockImplementation(
                 async ( path: string, method: ZenCore.interfaces.E_HTTP_METHOD_TYPE, body: {} | null = null ) => {
                     // Fake result.
                     return {
@@ -65,14 +65,14 @@ describe( 'command-bases', () => {
                     }
                 } );
 
-            const dataCommand = new class MyDataCommand extends ZenCore.commandBases.CommandData {
+            const restfulCommand = new class MyDataCommand extends ZenCore.commandBases.CommandRestful {
                 getEndpoint() {
                     return 'custom/endpoint/{id}/whatever/{index}';
                 }
             }
 
             // Act.
-            const result = await dataCommand.apply( {
+            const result = await restfulCommand.apply( {
                 id: 1,
                 index: 3,
             } );

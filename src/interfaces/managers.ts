@@ -1,6 +1,6 @@
 import Commands from "../manager-bases/commands";
 import Controllers from "../manager-bases/controllers";
-import Data from "../manager-bases/data";
+import Restful from "../manager-bases/restful";
 import Internal from "../manager-bases/internal";
 
 import { IAPIConfig } from "./config";
@@ -11,6 +11,6 @@ export interface IManagers {
 
     commands: Commands;
     controllers: Controllers;
-    data: Data;
+    restful: Restful;
     internal: Internal;
 }

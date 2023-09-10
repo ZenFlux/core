@@ -2,6 +2,6 @@
  * @author: Leonid Vinikov <leonidvinikov@gmail.com>
  */
 export { CommandPublic } from "./command-public";
-export { CommandData } from "./command-data";
+export { CommandRestful } from "./command-restful";
 export { CommandBase } from "./command-base";
 export { CommandInternal } from "./command-internal";
