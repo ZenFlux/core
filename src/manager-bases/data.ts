@@ -30,10 +30,10 @@ export class Data extends Commands {
         return 'Core/Managers/Data';
     }
 
-    constructor( Config: IAPIConfig) {
+    constructor( Config: IAPIConfig ) {
         super();
 
-        Data.client = new Http( Config.baseURL );
+        Data.client = new Http( Config.baseURL, Config.requestInit );
     }
 
     public getClient() {

@@ -20,6 +20,8 @@ export class Http extends ObjectBase {
 
     private readonly apiBaseUrl: string;
 
+    private readonly requestInit: RequestInit;
+
     private errorHandler?: TErrorHandlerCallbackType = undefined;
     private responseFilter?: TResponseFilterCallbackType = undefined;
     private responseHandler?: TResponseHandlerCallbackType = undefined;
@@ -31,7 +33,7 @@ export class Http extends ObjectBase {
     /**
      * Function constructor() : Create the http.
      */
-    constructor( apiBaseUrl = 'http://localhost' ) {
+    constructor( apiBaseUrl = 'http://localhost', requestInit: RequestInit = { 'credentials': 'include' } ) {
         super();
 
         this.logger = new Logger( Http.getName(), true );
@@ -39,6 +41,8 @@ export class Http extends ObjectBase {
         this.logger.startWith( { apiBaseUrl } );
 
         this.apiBaseUrl = apiBaseUrl + '/';
+
+        this.requestInit = requestInit;
     }
 
     /**
@@ -47,7 +51,7 @@ export class Http extends ObjectBase {
     async fetch( path: string, method: E_HTTP_METHOD_TYPE, body: any = {} ) {
         this.logger.startWith( { path, method, body } );
 
-        const params: RequestInit = { 'credentials': 'include' }, // Support cookies.
+        const params = Object.assign( {}, this.requestInit ),
             headers = {};
 
         if ( method === E_HTTP_METHOD_TYPE.GET ) {
@@ -61,13 +65,19 @@ export class Http extends ObjectBase {
             } );
         }
 
-        const response = await globalThis.fetch( this.apiBaseUrl + path, params );
+        const fetchPromise = globalThis.fetch( this.apiBaseUrl + path, params );
+
+        let response = await fetchPromise;
+
+        if ( ! response ) {
+            return false;
+        }
 
         let data = undefined;
 
         try {
             if ( ! response.ok ) {
-                throw response;
+                throw new Error( response.statusText );
             }
 
             let responseText = await response.text();

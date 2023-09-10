@@ -8,4 +8,9 @@ export interface IAPIConfig {
      * @description: API base url for http requests.
      */
     baseURL?: string;
+
+    /**
+     * @description: Request Init for fetch API.
+     */
+    requestInit?: RequestInit;
 }
