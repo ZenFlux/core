@@ -1,2 +1,1 @@
-# core
-Commands management pattern with utils, and http client wrapper.
+# Project moved to [monorepo](https://github.com/ZenFlux/zenflux/tree/main/packages/zenflux-core)
